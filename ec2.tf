@@ -195,7 +195,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy" {
   name = "example-cpu-policy"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = "3"
+  scaling_adjustment = "10"
   cooldown = "60"
   policy_type = "SimpleScaling"
 }
@@ -225,7 +225,7 @@ resource "aws_autoscaling_policy" "example-network-policy" {
   name = "example-network-policy"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = "3"
+  scaling_adjustment = "10"
   cooldown = "60"
   policy_type = "SimpleScaling"
 }
