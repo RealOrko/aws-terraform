@@ -12,8 +12,6 @@ resource "aws_launch_configuration" "autoscale_launch" {
 #  associate_public_ip_address = true
   user_data = <<-EOF
               #!/bin/bash
-              sudo apt-get -y update
-              sudo apt-get -y install nginx
               EOF
   lifecycle {
     create_before_destroy = true
@@ -26,7 +24,7 @@ resource "aws_autoscaling_group" "autoscale_group" {
   load_balancers = ["${aws_elb.elb.name}"]
   min_size = 1
   max_size = 10
-  desired_capacity = 10
+  desired_capacity = 1
   tag {
     key = "Name"
     value = "autoscale"
@@ -198,7 +196,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "1"
-  cooldown = "0"
+  cooldown = "60"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm" {
@@ -228,7 +226,7 @@ resource "aws_autoscaling_policy" "example-network-policy" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "1"
-  cooldown = "0"
+  cooldown = "60"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-network-alarm" {
@@ -263,7 +261,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy-scaledown" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "-1"
-  cooldown = "0"
+  cooldown = "60"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
@@ -296,7 +294,7 @@ resource "aws_autoscaling_policy" "example-network-policy-scaledown" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "-1"
-  cooldown = "0"
+  cooldown = "60"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-network-alarm-scaledown" {
