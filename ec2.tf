@@ -6,7 +6,7 @@ resource "aws_key_pair" "auth" {
 
 resource "aws_launch_configuration" "autoscale_launch" {
   image_id = "${lookup(var.aws_amis, var.aws_region)}"
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   security_groups = ["${aws_security_group.sec_web.id}"]
   key_name = "${aws_key_pair.auth.id}"
 #  associate_public_ip_address = true
@@ -26,7 +26,7 @@ resource "aws_autoscaling_group" "autoscale_group" {
   load_balancers = ["${aws_elb.elb.name}"]
   min_size = 1
   max_size = 10
-  desired_capacity = 1
+  desired_capacity = 10
   tag {
     key = "Name"
     value = "autoscale"
@@ -198,7 +198,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "1"
-  cooldown = "60"
+  cooldown = "0"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm" {
@@ -210,7 +210,7 @@ resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Average"
-  threshold = "10"
+  threshold = "25"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
@@ -228,7 +228,7 @@ resource "aws_autoscaling_policy" "example-network-policy" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "1"
-  cooldown = "60"
+  cooldown = "0"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-network-alarm" {
@@ -240,7 +240,7 @@ resource "aws_cloudwatch_metric_alarm" "example-network-alarm" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Sum"
-  threshold = "300000"
+  threshold = "100000"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
@@ -263,7 +263,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy-scaledown" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "-1"
-  cooldown = "60"
+  cooldown = "0"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
@@ -275,7 +275,7 @@ resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Average"
-  threshold = "5"
+  threshold = "20"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
@@ -296,7 +296,7 @@ resource "aws_autoscaling_policy" "example-network-policy-scaledown" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "-1"
-  cooldown = "60"
+  cooldown = "0"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-network-alarm-scaledown" {
@@ -308,7 +308,7 @@ resource "aws_cloudwatch_metric_alarm" "example-network-alarm-scaledown" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Sum"
-  threshold = "100000"
+  threshold = "95000"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
