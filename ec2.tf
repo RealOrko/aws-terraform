@@ -6,7 +6,7 @@ resource "aws_key_pair" "auth" {
 
 resource "aws_launch_configuration" "autoscale_launch" {
   image_id = "${lookup(var.aws_amis, var.aws_region)}"
-  instance_type = "t2.medium"
+  instance_type = "t2.micro"
   security_groups = ["${aws_security_group.sec_web.id}"]
   key_name = "${aws_key_pair.auth.id}"
 #  associate_public_ip_address = true
@@ -195,7 +195,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy" {
   name = "example-cpu-policy"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = "1"
+  scaling_adjustment = "3"
   cooldown = "60"
   policy_type = "SimpleScaling"
 }
@@ -208,7 +208,7 @@ resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Average"
-  threshold = "25"
+  threshold = "5"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
@@ -225,7 +225,7 @@ resource "aws_autoscaling_policy" "example-network-policy" {
   name = "example-network-policy"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = "1"
+  scaling_adjustment = "3"
   cooldown = "60"
   policy_type = "SimpleScaling"
 }
@@ -273,7 +273,7 @@ resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Average"
-  threshold = "20"
+  threshold = "5"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
@@ -306,7 +306,7 @@ resource "aws_cloudwatch_metric_alarm" "example-network-alarm-scaledown" {
   namespace = "AWS/EC2"
   period = "60"
   statistic = "Sum"
-  threshold = "95000"
+  threshold = "100000"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
