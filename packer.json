@@ -19,7 +19,7 @@
       "owners": ["099720109477"],
       "most_recent": true
     },
-    "instance_type": "t2.micro",
+    "instance_type": "t2.large",
     "ssh_username": "ubuntu",
     "ami_name": "ubuntu 16.04 dotnet core 2.2 {{timestamp}}"
   }],
