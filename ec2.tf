@@ -24,8 +24,9 @@ resource "aws_autoscaling_group" "autoscale_group" {
   launch_configuration = "${aws_launch_configuration.autoscale_launch.id}"
   vpc_zone_identifier = ["${aws_subnet.PrivateSubnetA.id}","${aws_subnet.PrivateSubnetB.id}","${aws_subnet.PrivateSubnetC.id}"]
   load_balancers = ["${aws_elb.elb.name}"]
-  min_size = 3
-  max_size = 3
+  min_size = 1
+  max_size = 10
+  desired_capacity = 1
   tag {
     key = "Name"
     value = "autoscale"
@@ -197,42 +198,82 @@ resource "aws_autoscaling_policy" "example-cpu-policy" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "1"
-  cooldown = "300"
+  cooldown = "60"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm" {
   alarm_name = "example-cpu-alarm"
   alarm_description = "example-cpu-alarm"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods = "2"
+  evaluation_periods = "1"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
-  period = "120"
+  period = "60"
   statistic = "Average"
-  threshold = "30"
+  threshold = "10"
   dimensions = {
     "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
   }
   actions_enabled = true
   alarm_actions = ["${aws_autoscaling_policy.example-cpu-policy.arn}"]
 }
+
+
+
+
+
+
+resource "aws_autoscaling_policy" "example-network-policy" {
+  name = "example-network-policy"
+  autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
+  adjustment_type = "ChangeInCapacity"
+  scaling_adjustment = "1"
+  cooldown = "60"
+  policy_type = "SimpleScaling"
+}
+resource "aws_cloudwatch_metric_alarm" "example-network-alarm" {
+  alarm_name = "example-network-alarm"
+  alarm_description = "example-network-alarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "1"
+  metric_name = "NetworkIn"
+  namespace = "AWS/EC2"
+  period = "60"
+  statistic = "Sum"
+  threshold = "300000"
+  dimensions = {
+    "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
+  }
+  actions_enabled = true
+  alarm_actions = ["${aws_autoscaling_policy.example-network-policy.arn}"]
+}
+
+
+
+
+
+
+
+
+
+
 # scale down alarm
 resource "aws_autoscaling_policy" "example-cpu-policy-scaledown" {
   name = "example-cpu-policy-scaledown"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
   scaling_adjustment = "-1"
-  cooldown = "300"
+  cooldown = "60"
   policy_type = "SimpleScaling"
 }
 resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
   alarm_name = "example-cpu-alarm-scaledown"
   alarm_description = "example-cpu-alarm-scaledown"
   comparison_operator = "LessThanOrEqualToThreshold"
-  evaluation_periods = "2"
+  evaluation_periods = "1"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
-  period = "120"
+  period = "60"
   statistic = "Average"
   threshold = "5"
   dimensions = {
@@ -240,4 +281,37 @@ resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
   }
   actions_enabled = true
   alarm_actions = ["${aws_autoscaling_policy.example-cpu-policy-scaledown.arn}"]
+}
+
+
+
+
+
+
+
+
+
+resource "aws_autoscaling_policy" "example-network-policy-scaledown" {
+  name = "example-network-policy-scaledown"
+  autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
+  adjustment_type = "ChangeInCapacity"
+  scaling_adjustment = "-1"
+  cooldown = "60"
+  policy_type = "SimpleScaling"
+}
+resource "aws_cloudwatch_metric_alarm" "example-network-alarm-scaledown" {
+  alarm_name = "example-network-alarm-scaledown"
+  alarm_description = "example-network-alarm-scaledown"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods = "1"
+  metric_name = "NetworkIn"
+  namespace = "AWS/EC2"
+  period = "60"
+  statistic = "Sum"
+  threshold = "100000"
+  dimensions = {
+    "AutoScalingGroupName" = "${aws_autoscaling_group.autoscale_group.name}"
+  }
+  actions_enabled = true
+  alarm_actions = ["${aws_autoscaling_policy.example-network-policy-scaledown.arn}"]
 }
