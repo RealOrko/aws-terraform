@@ -18,7 +18,7 @@ variable "aws_region" {
 # Ubuntu Precise 16.04 LTS (x64)
 variable "aws_amis" {
   default = {
-    eu-west-1 = "ami-58d7e821"
+    eu-west-1 = "ami-0104e52e60e7ac382"
   }
 }
 variable "dnszonename" {
