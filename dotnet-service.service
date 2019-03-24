@@ -2,7 +2,8 @@
 Description=Dotnet Core Service  
   
 [Service]  
-ExecStart=/usr/bin/dotnet ubuntu.dll --port 80
+ASPNETCORE_URLS=http://0.0.0.0:80
+ExecStart=/usr/bin/dotnet ubuntu.dll --server.urls http://0.0.0.0:80
 
 WorkingDirectory=/opt/dotnet-service/  
 Restart=on-failure  
