@@ -16,5 +16,5 @@ sudo dotnet publish -c Release -r linux-x64 -o /opt/dotnet-service/
 sudo cp -f ~/dotnet-service.service /etc/systemd/system/
 sudo systemctl daemon-reload  
 sudo systemctl enable dotnet-service.service  
-sudo systemctl start dotnet-sample-service.service  
-sudo systemctl status dotnet-sample-service.service  
+sudo systemctl start dotnet-service.service  
+sudo systemctl status dotnet-service.service  
