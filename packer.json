@@ -1,0 +1,45 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "vpc_id": "vpc-cfb441aa",
+    "subnet_id": "subnet-d3ea23b6",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "eu-west-1",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+        "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "ubuntu 16.04 dotnet core 2.2 {{timestamp}}"
+  }],
+  "provisioners": [
+    {
+        "type": "file",
+        "source": "./id_rsa.pub",
+        "destination": "~/"
+    },{
+        "type": "shell",
+        "inline":[
+            "mkdir -p ~/.ssh", 
+            "cat ~/id_rsa.pub >> ~/.ssh/authorized_keys"
+        ]
+    },{
+        "type": "file",
+        "source": "./dotnet-service.service",
+        "destination": "~/"
+    },{
+        "type": "shell",
+        "script": "./install-service.sh"
+    }]
+}

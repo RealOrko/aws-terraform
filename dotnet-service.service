@@ -1,0 +1,12 @@
+[Unit]  
+Description=Dotnet Core Service  
+  
+[Service]  
+ExecStart=/bin/dotnet/dotnet ubuntu.dll  
+WorkingDirectory=/opt/dotnet-service/  
+Restart=on-failure  
+SyslogIdentifier=dotnet-service  
+PrivateTmp=true  
+  
+[Install]  
+WantedBy=multi-user.target
