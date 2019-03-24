@@ -6,7 +6,7 @@ resource "aws_key_pair" "auth" {
 
 resource "aws_launch_configuration" "autoscale_launch" {
   image_id = "${lookup(var.aws_amis, var.aws_region)}"
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   security_groups = ["${aws_security_group.sec_web.id}"]
   key_name = "${aws_key_pair.auth.id}"
 #  associate_public_ip_address = true
@@ -23,7 +23,7 @@ resource "aws_autoscaling_group" "autoscale_group" {
   vpc_zone_identifier = ["${aws_subnet.PrivateSubnetA.id}","${aws_subnet.PrivateSubnetB.id}","${aws_subnet.PrivateSubnetC.id}"]
   load_balancers = ["${aws_elb.elb.name}"]
   min_size = 1
-  max_size = 10
+  max_size = 20
   desired_capacity = 1
   tag {
     key = "Name"
@@ -195,7 +195,7 @@ resource "aws_autoscaling_policy" "example-cpu-policy" {
   name = "example-cpu-policy"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = "10"
+  scaling_adjustment = "20"
   cooldown = "60"
   policy_type = "SimpleScaling"
 }
@@ -225,7 +225,7 @@ resource "aws_autoscaling_policy" "example-network-policy" {
   name = "example-network-policy"
   autoscaling_group_name = "${aws_autoscaling_group.autoscale_group.name}"
   adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = "10"
+  scaling_adjustment = "20"
   cooldown = "60"
   policy_type = "SimpleScaling"
 }
